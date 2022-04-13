@@ -6,7 +6,7 @@ O teste consiste em implementar uma lista de contatos e empresas. O projeto, obr
 
 O backend **deve** ser desenvolvido em `php` e **deve** conter uma API Rest.
 
-O sistema deve conter as seguin tes entidades e seus respectivos campos:
+O sistema deve conter as seguintes entidades e seus respectivos campos:
 
 - Usuário 
     - Nome: obrigatório para preenchimento
