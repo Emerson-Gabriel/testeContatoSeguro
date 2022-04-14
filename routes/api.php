@@ -17,3 +17,17 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+/*-----------------------------------*\
+    $ROTAS Usuário
+\*-----------------------------------*/
+Route::get('/usuario/{idUsuario?}','UsuarioController@index');
+Route::post('/usuario/salvar','UsuarioController@store');
+Route::get('/usuario/excluir/{idUsuario}','UsuarioController@destroy');
+
+/*-----------------------------------*\
+    $ROTAS Empresa
+\*-----------------------------------*/
+Route::get('/empresa/{idEmpresa?}','EmpresaController@index');
+Route::post('/empresa/salvar','EmpresaController@store');
+Route::get('/empresa/excluir/{idEmpresa}','EmpresaController@destroy');
