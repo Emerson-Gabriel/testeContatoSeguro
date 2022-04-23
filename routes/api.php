@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\EmpresaController;
+use App\Http\Controllers\UsuarioController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,13 +23,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 /*-----------------------------------*\
     $ROTAS Usuário
 \*-----------------------------------*/
-Route::get('/usuario/{idUsuario?}','UsuarioController@index');
-Route::post('/usuario/salvar','UsuarioController@store');
-Route::get('/usuario/excluir/{idUsuario}','UsuarioController@destroy');
+Route::get('/usuario/{idUsuario?}', [UsuarioController::class, 'index']);
+Route::post('/usuario/salvar',[UsuarioController::class, 'store']);
+Route::get('/usuario/excluir/{idUsuario}',[UsuarioController::class, 'destroy']);
 
 /*-----------------------------------*\
     $ROTAS Empresa
 \*-----------------------------------*/
-Route::get('/empresa/{idEmpresa?}','EmpresaController@index');
-Route::post('/empresa/salvar','EmpresaController@store');
-Route::get('/empresa/excluir/{idEmpresa}','EmpresaController@destroy');
+Route::get('/empresa/{idEmpresa?}', [EmpresaController::class, 'index']);
+Route::post('/empresa/salvar', [EmpresaController::class, 'store']);
+Route::get('/empresa/excluir/{idEmpresa}', [EmpresaController::class, 'destroy']);

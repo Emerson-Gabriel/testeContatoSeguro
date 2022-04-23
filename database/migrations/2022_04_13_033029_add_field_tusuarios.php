@@ -18,7 +18,9 @@ class AddFieldTusuarios extends Migration
         });
 
         Schema::table('tusuarios', function($table) {
-            $table->foreign('idEmpresa')->references('idEmpresa')->on('tempresas');
+            //o pedido dessa chave FK foi estranha não sendo possível sua implementação 
+            //pois também foi pedido chave FK na tabela referenciada
+            //$table->foreign('idEmpresa')->references('idEmpresa')->on('tempresas');
         });
     }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Usuario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class UsuarioController extends Controller
 {
@@ -14,11 +15,10 @@ class UsuarioController extends Controller
      */
     public function index($idUsuario = 0)
     {
-        if ($idUsuario == null) {
+        if ($idUsuario == null)
             $usuario = Usuario::all(['idUsuario','nome','email','telefone','dataNasc','cidade','idEmpresa']);
-        } else {
+        else
             $usuario = Usuario::Where('idUsuario', $idUsuario)->first();
-        }
         return response()->json($usuario, 200);
     }
     
@@ -29,11 +29,17 @@ class UsuarioController extends Controller
      */
     public function store(Request $request)
     {
-        if ($request->get('idUsuario') == null) { 
+        if ($request->get('idUsuario') == null) 
             $usuario = new Usuario();
-        } else {
+        else 
             $usuario = Usuario::Where('idUsuario', $request->get('idUsuario'))->first();
-        }
+
+        /* devemos fazer as validações aqui */
+        $arrayValidacao = new UsuarioController();
+        $validator = Validator::make($request->all(), $arrayValidacao->validaDados($request->all()));
+
+        if (!$validator->passes()) 
+            return $validator->errors();
 
         $usuario->nome = $request->get('nome');
         $usuario->email = $request->get('email');
@@ -47,6 +53,29 @@ class UsuarioController extends Controller
     }
 
     /**
+     * Exibe um registro específico
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        return Usuario::findOrFail($id);
+    }
+
+    /**
+     * Atualiza um registro específico
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
      * Realiza a exclusão do registro informado via get
      *
      * @return \Illuminate\Http\Response
@@ -56,15 +85,21 @@ class UsuarioController extends Controller
         if ($idUsuario != null) {
             $usuario = Usuario::Where('idUsuario', $idUsuario)->first();
             $usuario->delete();
-            return response()->json('', 200);
+            return response()->json('Registro excluído com sucesso', 200);
         }
     }
 
     /**
-     * -
+     * Valida os dados do form
      */
-    public function create()
+    public function validaDados()
     {
-
+        //validações
+        $this->validacao = [
+            'nome' => ['required'],
+            'email' => ['required'],
+            'idEmpresa' => ['required'],
+        ];
+        return $this->validacao;
     }
 }
