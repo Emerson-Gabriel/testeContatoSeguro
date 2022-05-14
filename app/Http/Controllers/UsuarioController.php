@@ -3,103 +3,51 @@
 namespace App\Http\Controllers;
 
 use App\Models\Usuario;
+use App\Http\Resources\Usuario as UsuarioResource;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class UsuarioController extends Controller
 {
-    /**
-     * Retorna a listagem de todos os registros ou apenas um
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index($idUsuario = 0)
-    {
-        if ($idUsuario == null)
-            $usuario = Usuario::all(['idUsuario','nome','email','telefone','dataNasc','cidade','idEmpresa']);
-        else
-            $usuario = Usuario::Where('idUsuario', $idUsuario)->first();
-        return response()->json($usuario, 200);
-    }
-    
-    /**
-     * Realiza o salvamento do novo registro no BD
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        if ($request->get('idUsuario') == null) 
-            $usuario = new Usuario();
-        else 
-            $usuario = Usuario::Where('idUsuario', $request->get('idUsuario'))->first();
-
-        /* devemos fazer as validações aqui */
-        $arrayValidacao = new UsuarioController();
-        $validator = Validator::make($request->all(), $arrayValidacao->validaDados($request->all()));
-
-        if (!$validator->passes()) 
-            return $validator->errors();
-
-        $usuario->nome = $request->get('nome');
-        $usuario->email = $request->get('email');
-        $usuario->telefone = $request->get('telefone');
-        $usuario->dataNasc = $request->get('dataNasc');
-        $usuario->cidade = $request->get('cidade');
-        $usuario->idEmpresa = $request->get('idEmpresa');
-        $usuario->save();
-
-        return response()->json($usuario, 201);
+    public function index(){
+        $usuarios = Usuario::paginate(15);
+        return UsuarioResource::collection($usuarios);
     }
 
-    /**
-     * Exibe um registro específico
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        return Usuario::findOrFail($id);
+    public function show($id){
+        $usuario = Usuario::findOrFail($id);
+        return new UsuarioResource($usuario);
     }
 
-    /**
-     * Atualiza um registro específico
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Realiza a exclusão do registro informado via get
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($idUsuario)
-    {
-        if ($idUsuario != null) {
-            $usuario = Usuario::Where('idUsuario', $idUsuario)->first();
-            $usuario->delete();
-            return response()->json('Registro excluído com sucesso', 200);
+    public function store(Request $request){
+        $usuario = new Usuario;
+        $usuario->nome = $request->input('nome');
+        $usuario->email = $request->input('email');
+        $usuario->telefone = $request->input('telefone');
+        $usuario->dataNasc = $request->input('dataNasc');
+        $usuario->cidade = $request->input('cidade');
+        $usuario->idEmpresa = $request->input('idEmpresa');
+        if($usuario->save()){
+            return new UsuarioResource($usuario);
         }
     }
 
-    /**
-     * Valida os dados do form
-     */
-    public function validaDados()
-    {
-        //validações
-        $this->validacao = [
-            'nome' => ['required'],
-            'email' => ['required'],
-            'idEmpresa' => ['required'],
-        ];
-        return $this->validacao;
+    public function update(Request $request){
+        $usuario = Usuario::findOrFail($request->id);
+        $usuario->nome = $request->input('nome');
+        $usuario->email = $request->input('email');
+        $usuario->telefone = $request->input('telefone');
+        $usuario->dataNasc = $request->input('dataNasc');
+        $usuario->cidade = $request->input('cidade');
+        $usuario->idEmpresa = $request->input('idEmpresa');
+        if( $usuario->save() ){
+            return new UsuarioResource($usuario);
+        }
+    } 
+
+    public function destroy($id){
+        $usuario = Usuario::findOrFail($id);
+        if( $usuario->delete() ){
+            return new UsuarioResource($usuario);
+        }
     }
 }
